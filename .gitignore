@@ -6,6 +6,7 @@
 *.lo
 *.o
 *.obj
+simpleDraw3D
 
 # Precompiled Headers
 *.gch

@@ -4,10 +4,10 @@
 // So bezier, arc, circle, straight-edged shapes, and the line tool.
 // A pen tool can be made possible using line, but should be as low-resolution as possible.
 //
-//I'm considering using my sdl framework for the GUI level.
 
 #include <iostream>
 #include <string>
+#include "utils.h"
 
 
 class gcode
@@ -15,6 +15,8 @@ class gcode
 	public:
 		gcode();
 		void autoHome();
+		// preheat the head and bed.
+		void prepElements();
 		void heatBed(double tempCelsius);
 		void move(double x, double y);
 		void pause(int milSec);
@@ -23,7 +25,6 @@ class gcode
 		void drawCircle(double centerx, double centery);
 		// cout the entire code as it currently exists;
 		void printCode();
-
 
 	private:
 		std::string code;
@@ -34,13 +35,16 @@ class gcode
 gcode::gcode()
 {
 	code += "; Default unit is in mm\n";
-
-
 }
 
 void gcode::autoHome()
 {
 	code += "G28\n";
+}
+
+void gcode::prepElements()
+{
+
 }
 
 void gcode::fan(bool trueOn)
@@ -62,7 +66,6 @@ void gcode::move(double x, double y)
 
 }
 
-
 void gcode::drawCircle(double centerx, double centery)
 {
 
@@ -71,11 +74,9 @@ void gcode::drawCircle(double centerx, double centery)
 void gcode::pause(int milSec)
 {
 	code += "G4 ";
-	code += milSec;
+	code += toStr(milSec);
 	code += "\n";
 }
-
-
 
 void gcode::printCode()
 {
@@ -83,20 +84,3 @@ void gcode::printCode()
 }
 
 
-using namespace std;
-
-
-int main(int argc, char **argv)
-{
-
-	gcode bob;
-
-	bob.autoHome();
-	bob.move(20, 20);
-	bob.move(100, 10);
-	bob.move(200, 200);
-	bob.pause(3000);
-	bob.autoHome();
-	bob.printCode();
-
-}
