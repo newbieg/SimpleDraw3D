@@ -828,4 +828,26 @@ class hBox: public group
 
 };
 
+
+
+// used as a paintable object, takes mou
+class paint: public item
+{
+	public:
+	paint();
+	void line(int x, int y, int i, int j);
+	void lineTo(int x, int y);
+	void circle(int centerX, int centerY, double radius);
+	void bezier();
+	//void setColor(char r, char g, char b);
+
+	private:
+	item brush;
+	unsigned int color;
+	// track last line
+	int xLast;
+	int yLast;
+
+};
+
 #endif

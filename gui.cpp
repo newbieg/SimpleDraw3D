@@ -1,76 +1,93 @@
 #include "sprite.h"
+#include "gcode_core.h"
 #include <iostream>
 
 SDL_Window* wind;
-const int windX = 1200;
-const int windY = 700;
+const int windX = 900;
+const int windY = 900;
 const int SDL_WU = SDL_WINDOWPOS_UNDEFINED;
 
 using namespace std;
 
 int main(int argc, char ** argv)
 {
+	gcode control;
+	control.prepElements();
+	string bkgPath = "start.png";
+	if(argc > 1)
+	{
+		bkgPath = argv[1];
+	}
+	cout << "; Loading " << bkgPath << endl;
+	
 	initFramework();
 	window wind("Template Window", windX, windY, SDL_WINDOW_RESIZABLE);
 
+	item bkg;
+	bkg.setImage(bkgPath);
+
 	SDL_Surface* screen;
 	wind.linkScreen(&screen);
-
-	item tom(200, 100, 50, 40);
 	
-	bool run = true;
-	speed spd;
-	spd.fps = 30;
-	spd.redux = SDL_GetTicks();
-	while(run)
+	// Draw to screen here.
+	SDL_FillRect(screen, NULL, 0xffffff);
+	bkg.draw(screen);
+
+	wind.draw();
+	SDL_Rect br = bkg.getPos();
+	int count = (br.x - br.w)*(br.y - br.h);
+	vector <int> dark;
+	bool drawing = false;
+	for(int i = count; i > 0; i --)
 	{
-		SDL_Event ev;
-		while(SDL_PollEvent(&ev) != 0)
+		unsigned char r, g, b;
+		SDL_GetRGB(((unsigned int *) bkg.getImage()->pixels)[i], bkg.getImage()->format, &r, &g, &b);
+		int ac = r;
+		ac += g;
+		ac += b;
+		if(ac < 200)
 		{
-			run = wind.handleEvent(ev);
-			if(ev.type == SDL_KEYDOWN)
+			double x = (double)(i % br.w) * 0.3333;
+			double y = (double)(i / br.w) * 0.3333;
+			if(drawing == true)
 			{
-				switch(ev.key.keysym.sym)
+				while(ac < 200 && i % br.w)
 				{
-					case SDLK_w:
-						if(SDL_GetModState() & KMOD_ALT)
-						{
-							run = false;
-						}
-						break;
-					case SDLK_f:
-						wind.toggleFS();
-					case SDLK_SPACE:
-					break;
-					case SDLK_RIGHT:
-					{
-						tom.move(1,0);
-					}
+					x = (double)(i % br.w) * 0.3333;
+					SDL_GetRGB(((unsigned int *) bkg.getImage()->pixels)[i], bkg.getImage()->format, &r, &g, &b);
+					ac = r;
+					ac += g;
+					ac += b;
+					i --;
+
 				}
+				//draw with extrude
+				control.move(x, y);
 			}
-			else if(ev.type == SDL_KEYUP)
+			else
 			{
-				if(ev.key.keysym.sym == SDLK_f)
-				{
-				}
+				// move to this pos.
+				// no extrude.
+				control.rapid(x, y);
 			}
-			else if(ev.type == SDL_MOUSEBUTTONDOWN)
+			drawing = true;
+			if((i % br.w) == 0)
 			{
+				drawing = false;
 			}
 		}
-		// Draw to screen here.
-		SDL_FillRect(screen, NULL, 0xffffff);
-
-		tom.draw(screen);
-		spd.printFPS(screen, "res/Acme/Acme-Regular.ttf",  20, 20);
-		wind.draw();
-		spd.limitFPS();
-		spd.fc++;
+		else
+		{
+			drawing = false;
+		}
 	}
+	control.close();
+	SDL_Delay(1000);
 
 	wind.close();
 
 	closeFramework();
+	control.printCode();
 	return 0;
 }
 

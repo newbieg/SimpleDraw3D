@@ -3,8 +3,14 @@
 #include <string>
 #include <cstring>
 #include <iostream>
+#include <math.h>
 
 #include "utils.h"
+
+double distance(double x, double y, double i, double j)
+{
+	return sqrt((x-i)*(x-i)+(y-j)*(y-j));
+}
 
 std::string reverse(std::string str)
 {
@@ -18,27 +24,11 @@ std::string reverse(std::string str)
 }
 
 
-std::string toStr(int number)
+std::string toStr(double number)
 {
-	std::string output = "";
-	std::string revd = "";
-	bool isNegative = (number < 0);
-	int start = 0;
-	if(isNegative)
-	{
-		number *= -1;
-		output += "-";
-		start ++;
-	}
-
-	while(number > 0)
-	{
-		revd += (number % 10) + '0';
-		number -= number % 10;
-		number = number / 10;
-	}
-	output += reverse(revd);
-	
+	std::string output;
+	output = std::to_string(number);
+	output = output.substr(0, output.find('.') + 4);
 	
 	return output;
 }

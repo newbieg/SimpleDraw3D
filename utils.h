@@ -5,12 +5,11 @@
 #define MYBITTYCUTILITIES
 #include <string>
 
+double distance(double x, double y, double i, double j);
+
 char toUpper(char chr);
 bool isDecimal(char chr);
 bool isAlpha(char chr);
-// check if the given varOrFunction is a viable name,
-// not containing arithmetic, and not a const number;
-bool isLabel(std::string varOrFunction);
 // check if the given number is just that.
 bool isConst(std::string number);
 // look for exact match of a word in a codeLine, 
@@ -19,7 +18,7 @@ bool isConst(std::string number);
 bool matchFind(std::string word, std::string codeLine, int &pos);
 int toInt(const char *number);
 std::string reverse(std::string str);
-std::string toStr(int number);
+std::string toStr(double number);
 // given text starts with whiteSpace and contains commands and further whiteSpace, 
 // drop the initial whitespace up until the first command.
 std::string previousWord(std::string text, int &start);

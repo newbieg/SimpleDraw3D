@@ -2781,3 +2781,25 @@ void vBox::draw()
 }
 
 
+
+
+
+////////////////////// PAINT CLASS ////////////////////////
+
+paint::paint()
+{
+	this->setSize(900, 900);
+	setColor(40, 50, 90);
+}
+
+void paint::line(int x, int y, int i, int j)
+{
+	drawLine(this->image, this->color, x, y, i, j);
+}
+
+void paint::lineTo(int x, int y)
+{
+	line(x, y, xLast, yLast);
+	xLast = x;
+	yLast = y;
+}
